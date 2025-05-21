@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Svetylko</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 40px 20px;
+            color: #333;
+        }
+        .offline-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #3367d6;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="icon">📶</div>
+        <h1>Jste offline</h1>
+        <p>Vypadá to, že jste momentálně bez připojení k internetu. Některé funkce a obsah nemusí být dostupné, dokud se znovu nepřipojíte.</p>
+        <button onclick="window.location.reload()">Zkusit znovu</button>
+    </div>
+
+    <script>
+        // Kontrola připojení
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
