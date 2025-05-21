@@ -1,199 +1,47 @@
-	<!DOCTYPE html>
-	<html lang="cs">
-	<head>
-	    <meta charset="UTF-8">
-	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nastavení barvy a zámek obrazovky</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-family: Arial, sans-serif;
-        }
-        #colorDisplay {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background-color 0.3s;
-        }
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-        .controls label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        .controls input {
-            margin-bottom: 15px;
-        }
-        .status {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        button {
-            padding: 10px 15px;
-            background: #4285f4;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background: #2b6cd4;
-        }
-    </style>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Svetylko</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA meta tagy -->
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Svetylko - Vaše aplikace">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
+    <!-- iOS podpora -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Svetylko">
 </head>
 <body>
-    <div id="colorDisplay"></div>
-    
-    <div class="controls">
-        <label for="colorPicker">Vyberte barvu:</label>
-        <input type="color" id="colorPicker" value="#ffffff">
-        
-        <button id="keepAwakeBtn">Zabránit zhasnutí a zamčení</button>
-        <div id="status" class="status">Status: Neaktivní</div>
-    </div>
+    <header>
+        <h1>Svetylko</h1>
+        <nav>
+            <!-- Vaše navigace -->
+        </nav>
+    </header>
+
+    <main>
+        <!-- Váš obsah -->
+    </main>
+
+    <footer>
+        <!-- Vaše patička -->
+    </footer>
 
     <script>
-        const colorDisplay = document.getElementById('colorDisplay');
-        const colorPicker = document.getElementById('colorPicker');
-        const keepAwakeBtn = document.getElementById('keepAwakeBtn');
-        const statusDisplay = document.getElementById('status');
-        
-        let wakeLock = null;
-        let keepAwakeInterval = null;
-        
-        // Nastavení barvy
-        colorPicker.addEventListener('input', () => {
-            colorDisplay.style.backgroundColor = colorPicker.value;
-        });
-        
-        // Inicializace barvy
-        colorDisplay.style.backgroundColor = colorPicker.value;
-        
-        // Screen Wake Lock API
-        async function requestWakeLock() {
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                    statusDisplay.textContent = 'Status: Aktivní (Screen Wake Lock)';
-                    statusDisplay.style.color = 'green';
-                    
-                    wakeLock.addEventListener('release', () => {
-                        statusDisplay.textContent = 'Status: Neaktivní (Wake Lock byl uvolněn)';
-                        statusDisplay.style.color = 'red';
-                        wakeLock = null;
-                    });
-                } else {
-                    // Fallback pro prohlížeče bez Wake Lock API
-                    useKeepAwakeFallback();
-                }
-            } catch (err) {
-                console.error(`Wake Lock chyba: ${err.message}`);
-                useKeepAwakeFallback();
-            }
-        }
-        
-        // Fallback metoda pro starší prohlížeče
-        function useKeepAwakeFallback() {
-            if (keepAwakeInterval) {
-                clearInterval(keepAwakeInterval);
-            }
-            
-            // Malý video element, který se přehrává ve smyčce
-            const video = document.createElement('video');
-            video.src = 'data:video/webm;base64,GkXfowEAAAAAAAAfQoaBAUL3gQFC8oEEQvOBCEKChHdlYm1Ch4EEQoWBAhhTgGcBAAAAAAAVkhFNm3RALE27i1OrhBVJqWZTrIHfTbuMU6uEFlSua1OsggEwTbuMU6uEHFO7a1OsggfG7AEAAAAAAACkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmAQAAAAAAAEUq17GDD0JATYCNTGF2ZjU1LjMzLjEwMFdBjUxhdmY1NS4zMy4xMDBzpJAGSJTMbsLpDt/ySkipgQAAAAAAABZUrmsBAAAAAAAAPvfVb2hwbWMAAQAIAAAAGHN0dHMAAAAAAAAAAQAAACAAAQAAAAAAU3RkVY/FAABzp7PxBYgEAQAAAAAAAOAgIAxhdmMxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABIAAAAKhzdHNjAAAAAAAAAAEAAAABAAAAAQAAABxzdHN6AAAAAAAAAAAAAAAAIAAAAAAAAAAAAAQAAAQAAAAAAAAAA7HN0Y28AAAAAAAAAAQAAACAAAAATc3RzegAAAAAAAAAGAAAAATwAAAABAAAADgAAAAEAAAAIAAAAAQAAAAN0cmFrAAAAXHRraGQAAAAPAAAAAAAAAAAAAAABAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAABTGF2ZgAAABpmNjRtcm9tAAAAAAAAAAEAAEAAAAMAAAAeJuIAAAAAAGMibWluZgAAABxmbWhkAAAAAQAAAAAAAAAAAAAhZGluZgAAAB1kaHZyAAAA/wAAABhkdHJhAAAAAAAAAABtZXRhAAAAHGdtZXRhAAAAAAAAAQAAABhodGhlAAAAAQAAAABzcGVjAAAAAS0AAABkY29scgAAABxjcmVhAAAAAAAAAB0AAAAMAAAAAAAAG21pbmYAAAAQc21oZAAAAAAAAAAAAAAAJGRpbmYAAAAecG9zdAAAAAEAAAABAAAAEHN0YmwAAABkc3RzZAAAAAAAAAABAAAAMG1pZGkAAAAQZG14ZAAAAAAAAAAAADhkYXRhAAAAAQAAMIIAAQAAAACJeyJtaW1lX3R5cGUiOiAidmlkZW8vd2VibSIsICJjb2RlY3MiOiBbXSwgImZyYW1lX3JhdGUiOiAwLjAwMDEwMCwgIndpZHRoIjogMiwgImhlaWdodCI6IDIsICJ0aW1lc2NhbGUiOiAxMDAwMDAwLCAiZHVyYXRpb24iOiAzNjAwLjAwfQA=';
-            video.loop = true;
-            video.muted = true;
-            video.style.position = 'absolute';
-            video.style.width = '1px';
-            video.style.height = '1px';
-            video.style.opacity = '0.01';
-            document.body.appendChild(video);
-            
-            video.play().then(() => {
-                statusDisplay.textContent = 'Status: Aktivní (Video Fallback)';
-                statusDisplay.style.color = 'green';
-            }).catch(err => {
-                statusDisplay.textContent = 'Status: Selhalo (Video nelze přehrát)';
-                statusDisplay.style.color = 'red';
-                console.error(`Fallback chyba: ${err.message}`);
+        // Registrace service workeru pro PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service worker registered!', reg))
+                    .catch(err => console.log('Service worker registration failed:', err));
             });
-            
-            // Simulace aktivity každých 30 sekund
-            keepAwakeInterval = setInterval(() => {
-                if (document.hidden) {
-                    // Pokud je stránka na pozadí, nemusíme nic dělat
-                    return;
-                }
-                
-                const event = new MouseEvent('mousemove', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true,
-                    clientX: Math.floor(Math.random() * window.innerWidth),
-                    clientY: Math.floor(Math.random() * window.innerHeight)
-                });
-                
-                document.dispatchEvent(event);
-            }, 30000);
         }
-        
-        // Přepínač funkce zabránění zamknutí obrazovky
-        keepAwakeBtn.addEventListener('click', () => {
-            if (wakeLock || keepAwakeInterval) {
-                // Vypnout
-                if (wakeLock) {
-                    wakeLock.release();
-                    wakeLock = null;
-                }
-                
-                if (keepAwakeInterval) {
-                    clearInterval(keepAwakeInterval);
-                    keepAwakeInterval = null;
-                }
-                
-                const videos = document.querySelectorAll('video');
-                videos.forEach(v => v.remove());
-                
-                statusDisplay.textContent = 'Status: Neaktivní';
-                statusDisplay.style.color = 'black';
-                keepAwakeBtn.textContent = 'Zabránit zhasnutí a zamčení';
-            } else {
-                // Zapnout
-                requestWakeLock();
-                keepAwakeBtn.textContent = 'Vypnout zabránění zhasnutí';
-            }
-        });
-        
-        // Celoobrazovkový režim
-        document.addEventListener('dblclick', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.error(`Chyba celoobrazovkového režimu: ${err.message}`);
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        });
-        
-        // Informace o použití
-        colorDisplay.innerHTML = '<div style="background: rgba(255,255,255,0.8); padding: 20px; border-radius: 10px; max-width: 80%; text-align: center;">Dvojklikem přepnete celoobrazovkový režim</div>';
-        setTimeout(() => {
-            colorDisplay.innerHTML = '';
-        }, 5000);
     </script>
 </body>
 </html>
