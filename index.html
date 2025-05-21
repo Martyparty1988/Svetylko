@@ -1,374 +1,199 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Svetylko</title>
-    
-    <!-- PWA meta tagy -->
-    <meta name="theme-color" content="#4285f4">
-    <meta name="description" content="Svetylko - Vaše PWA aplikace">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Svetylko">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="msapplication-TileColor" content="#4285f4">
-    
-    <!-- PWA ikony -->
-    <link rel="icon" href="icons/favicon.ico">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167x167.png">
-    
-    <!-- PWA splashscreen -->
-    <link rel="apple-touch-startup-image" href="icons/splash-2048x2732.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-1668x2388.png" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-1668x2224.png" media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-1536x2048.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    <link rel="apple-touch-startup-image" href="icons/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
-    
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+	<!DOCTYPE html>
+	<html lang="cs">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nastavení barvy a zámek obrazovky</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+        #colorDisplay {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .controls label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .controls input {
+            margin-bottom: 15px;
+        }
+        .status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 15px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #2b6cd4;
+        }
+    </style>
 </head>
 <body>
-    <!-- Offline indikátor -->
-    <div class="offline-indicator">
-        Jste offline. Některé funkce mohou být omezené.
+    <div id="colorDisplay"></div>
+    
+    <div class="controls">
+        <label for="colorPicker">Vyberte barvu:</label>
+        <input type="color" id="colorPicker" value="#ffffff">
+        
+        <button id="keepAwakeBtn">Zabránit zhasnutí a zamčení</button>
+        <div id="status" class="status">Status: Neaktivní</div>
     </div>
 
-    <!-- Header -->
-    <header>
-        <div class="container d-flex align-center justify-between">
-            <a href="/" class="logo">
-                <div class="logo-img">S</div>
-                <span>Svetylko</span>
-            </a>
-            
-            <nav>
-                <button class="nav-toggle" aria-label="Menu">☰</button>
-                <ul class="nav-links">
-                    <li><a href="/">Úvod</a></li>
-                    <li><a href="#o-nas">O nás</a></li>
-                    <li><a href="#sluzby">Služby</a></li>
-                    <li><a href="#galerie">Galerie</a></li>
-                    <li><a href="#kontakt">Kontakt</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Main -->
-    <main>
-        <!-- Hero sekce -->
-        <section class="hero">
-            <div class="container">
-                <h1 class="fade-in">Vítejte v aplikaci Svetylko</h1>
-                <p class="fade-in">Vaše PWA aplikace pro snadný přístup ke všemu, co potřebujete. Funguje i offline!</p>
-                <a href="#sluzby" class="btn btn-lg slide-in-up">Zjistit více</a>
-            </div>
-        </section>
-        
-        <!-- Služby -->
-        <section id="sluzby" class="section">
-            <div class="container">
-                <h2 class="section-title">Naše služby</h2>
-                
-                <div class="row">
-                    <div class="col-4">
-                        <div class="card fade-in">
-                            <div class="card-img">
-                                <span>📱</span>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Mobilní přístup</h3>
-                                <p class="card-text">Přístup ke všem funkcím odkudkoliv. Používejte aplikaci i offline když nejste připojeni k internetu.</p>
-                                <a href="#" class="btn">Více informací</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-4">
-                        <div class="card fade-in">
-                            <div class="card-img">
-                                <span>⚡</span>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Rychlé načítání</h3>
-                                <p class="card-text">Optimalizováno pro rychlost. Žádné zbytečné čekání díky cachování dat a optimalizaci.</p>
-                                <a href="#" class="btn">Více informací</a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-4">
-                        <div class="card fade-in">
-                            <div class="card-img">
-                                <span>🔔</span>
-                            </div>
-                            <div class="card-content">
-                                <h3 class="card-title">Notifikace</h3>
-                                <p class="card-text">Budeme vás informovat o důležitých událostech pomocí push notifikací, i když aplikace neběží.</p>
-                                <a href="#" class="btn">Více informací</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- O nás -->
-        <section id="o-nas" class="section bg-light">
-            <div class="container">
-                <h2 class="section-title">O nás</h2>
-                <div class="row">
-                    <div class="col-6">
-                        <p class="mb-2">Svetylko je moderní PWA aplikace, která vám umožňuje přístup ke všem potřebným funkcím z jakéhokoliv zařízení. Pracuje i offline a nabízí rychlé načítání obsahu.</p>
-                        <p class="mb-3">Díky moderním technologiím jako jsou Service Workers a Web App Manifest získáte zážitek srovnatelný s nativními aplikacemi, ale bez nutnosti instalace z App Store nebo Google Play.</p>
-                        <a href="#" class="btn btn-outline">Přečíst více</a>
-                    </div>
-                    <div class="col-6">
-                        <div class="card p-4">
-                            <h3 class="mb-3">Výhody PWA</h3>
-                            <ul>
-                                <li class="mb-1">Funguje na všech platformách (iOS, Android, desktop)</li>
-                                <li class="mb-1">Není potřeba instalovat z App Store nebo Google Play</li>
-                                <li class="mb-1">Funguje offline nebo při pomalém připojení</li>
-                                <li class="mb-1">Rychlé načítání díky cachování</li>
-                                <li class="mb-1">Zabírá minimální místo v zařízení</li>
-                                <li>Automatické aktualizace</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Galerie -->
-        <section id="galerie" class="section">
-            <div class="container">
-                <h2 class="section-title">Galerie</h2>
-                
-                <div class="row">
-                    <div class="col-3">
-                        <div class="card">
-                            <div class="card-img">
-                                <span>🖼️</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <div class="card-img">
-                                <span>🖼️</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <div class="card-img">
-                                <span>🖼️</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="card">
-                            <div class="card-img">
-                                <span>🖼️</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-4">
-                    <a href="#" class="btn btn-lg">Zobrazit více</a>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Kontakt -->
-        <section id="kontakt" class="section bg-light">
-            <div class="container">
-                <h2 class="section-title">Kontaktujte nás</h2>
-                <div class="row">
-                    <div class="col-6">
-                        <form id="contact-form" class="mb-4">
-                            <div class="form-group">
-                                <label for="name" class="form-label">Jméno</label>
-                                <input type="text" id="name" class="form-control" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" class="form-control" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="message" class="form-label">Zpráva</label>
-                                <textarea id="message" class="form-control" rows="5" required></textarea>
-                            </div>
-                            
-                            <button type="submit" class="btn">Odeslat</button>
-                        </form>
-                    </div>
-                    
-                    <div class="col-6">
-                        <div class="p-4 bg-white card">
-                            <h3 class="mb-3">Kontaktní informace</h3>
-                            <p><strong>Adresa:</strong> Vaše ulice 123, Město, PSČ</p>
-                            <p><strong>Telefon:</strong> +420 123 456 789</p>
-                            <p><strong>Email:</strong> info@svetylko.cz</p>
-                            
-                            <h4 class="mt-4 mb-2">Otevírací doba</h4>
-                            <p>Pondělí - Pátek: 9:00 - 17:00</p>
-                            <p>Sobota - Neděle: Zavřeno</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- PWA instalační banner -->
-        <div class="install-prompt">
-            <div class="install-prompt-info">
-                <strong>Nainstalujte si aplikaci Svetylko</strong>
-                <p>Pro rychlejší přístup a offline použití</p>
-            </div>
-            <div class="install-prompt-actions">
-                <button class="btn btn-outline install-later">Později</button>
-                <button class="btn install-now">Instalovat</button>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3 class="footer-title">Svetylko</h3>
-                    <p>Moderní PWA aplikace pro všechna zařízení. Používejte offline i online odkudkoliv.</p>
-                    <div class="social-links mt-3">
-                        <a href="#" aria-label="Facebook"><span>FB</span></a>
-                        <a href="#" aria-label="Instagram"><span>IG</span></a>
-                        <a href="#" aria-label="Twitter"><span>TW</span></a>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h3 class="footer-title">Odkazy</h3>
-                    <ul class="footer-links">
-                        <li><a href="/">Úvod</a></li>
-                        <li><a href="#o-nas">O nás</a></li>
-                        <li><a href="#sluzby">Služby</a></li>
-                        <li><a href="#galerie">Galerie</a></li>
-                        <li><a href="#kontakt">Kontakt</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h3 class="footer-title">Kontakt</h3>
-                    <p>Vaše ulice 123<br>Město, PSČ<br>Česká republika</p>
-                    <p>Email: info@svetylko.cz<br>Tel: +420 123 456 789</p>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; <span id="current-year"></span> Svetylko. Všechna práva vyhrazena.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript -->
-    <script src="app.js"></script>
     <script>
-        // Aktuální rok v patičce
-        document.getElementById('current-year').textContent = new Date().getFullYear();
+        const colorDisplay = document.getElementById('colorDisplay');
+        const colorPicker = document.getElementById('colorPicker');
+        const keepAwakeBtn = document.getElementById('keepAwakeBtn');
+        const statusDisplay = document.getElementById('status');
         
-        // Registrace service workeru
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('Service Worker úspěšně zaregistrován:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.error('Registrace Service Workeru selhala:', error);
-                    });
-            });
-        }
+        let wakeLock = null;
+        let keepAwakeInterval = null;
         
-        // Odesílání kontaktního formuláře
-        const contactForm = document.getElementById('contact-form');
-        if (contactForm) {
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Získání dat z formuláře
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const message = document.getElementById('message').value;
-                
-                // Zde můžete implementovat odesílání dat na server
-                // Pro offline režim můžete data uložit do IndexedDB a odeslat později
-                
-                // Příklad použití Background Sync pro offline odesílání
-                if ('serviceWorker' in navigator && 'SyncManager' in window) {
-                    const formData = {
-                        name: name,
-                        email: email,
-                        message: message,
-                        date: new Date().toISOString()
-                    };
-                    
-                    // Uložení dat do IndexedDB a registrace sync tasku
-                    // saveToIndexedDB(formData).then(() => {
-                    //     return navigator.serviceWorker.ready;
-                    // }).then(sw => {
-                    //     return sw.sync.register('submit-form');
-                    // }).catch(err => {
-                    //     console.error('Background sync nemohl být zaregistrován', err);
-                    // });
-                    
-                    alert('Děkujeme za zprávu! Budeme vás kontaktovat co nejdříve.');
-                    contactForm.reset();
-                } else {
-                    // Fallback pro prohlížeče bez podpory Background Sync
-                    alert('Děkujeme za zprávu! Budeme vás kontaktovat co nejdříve.');
-                    contactForm.reset();
-                }
-            });
-        }
-        
-        // Scrollování na kotvy s plynulým přechodem
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    window.scrollTo({
-                        top: target.offsetTop - 70, // Odečtení výšky headeru
-                        behavior: 'smooth'
-                    });
-                    
-                    // Zavření mobilního menu po kliknutí na odkaz
-                    const navLinks = document.querySelector('.nav-links');
-                    if (navLinks && navLinks.classList.contains('active')) {
-                        navLinks.classList.remove('active');
-                    }
-                }
-            });
+        // Nastavení barvy
+        colorPicker.addEventListener('input', () => {
+            colorDisplay.style.backgroundColor = colorPicker.value;
         });
+        
+        // Inicializace barvy
+        colorDisplay.style.backgroundColor = colorPicker.value;
+        
+        // Screen Wake Lock API
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    statusDisplay.textContent = 'Status: Aktivní (Screen Wake Lock)';
+                    statusDisplay.style.color = 'green';
+                    
+                    wakeLock.addEventListener('release', () => {
+                        statusDisplay.textContent = 'Status: Neaktivní (Wake Lock byl uvolněn)';
+                        statusDisplay.style.color = 'red';
+                        wakeLock = null;
+                    });
+                } else {
+                    // Fallback pro prohlížeče bez Wake Lock API
+                    useKeepAwakeFallback();
+                }
+            } catch (err) {
+                console.error(`Wake Lock chyba: ${err.message}`);
+                useKeepAwakeFallback();
+            }
+        }
+        
+        // Fallback metoda pro starší prohlížeče
+        function useKeepAwakeFallback() {
+            if (keepAwakeInterval) {
+                clearInterval(keepAwakeInterval);
+            }
+            
+            // Malý video element, který se přehrává ve smyčce
+            const video = document.createElement('video');
+            video.src = 'data:video/webm;base64,GkXfowEAAAAAAAAfQoaBAUL3gQFC8oEEQvOBCEKChHdlYm1Ch4EEQoWBAhhTgGcBAAAAAAAVkhFNm3RALE27i1OrhBVJqWZTrIHfTbuMU6uEFlSua1OsggEwTbuMU6uEHFO7a1OsggfG7AEAAAAAAACkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmAQAAAAAAAEUq17GDD0JATYCNTGF2ZjU1LjMzLjEwMFdBjUxhdmY1NS4zMy4xMDBzpJAGSJTMbsLpDt/ySkipgQAAAAAAABZUrmsBAAAAAAAAPvfVb2hwbWMAAQAIAAAAGHN0dHMAAAAAAAAAAQAAACAAAQAAAAAAU3RkVY/FAABzp7PxBYgEAQAAAAAAAOAgIAxhdmMxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAABIAAAAKhzdHNjAAAAAAAAAAEAAAABAAAAAQAAABxzdHN6AAAAAAAAAAAAAAAAIAAAAAAAAAAAAAQAAAQAAAAAAAAAA7HN0Y28AAAAAAAAAAQAAACAAAAATc3RzegAAAAAAAAAGAAAAATwAAAABAAAADgAAAAEAAAAIAAAAAQAAAAN0cmFrAAAAXHRraGQAAAAPAAAAAAAAAAAAAAABAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAABTGF2ZgAAABpmNjRtcm9tAAAAAAAAAAEAAEAAAAMAAAAeJuIAAAAAAGMibWluZgAAABxmbWhkAAAAAQAAAAAAAAAAAAAhZGluZgAAAB1kaHZyAAAA/wAAABhkdHJhAAAAAAAAAABtZXRhAAAAHGdtZXRhAAAAAAAAAQAAABhodGhlAAAAAQAAAABzcGVjAAAAAS0AAABkY29scgAAABxjcmVhAAAAAAAAAB0AAAAMAAAAAAAAG21pbmYAAAAQc21oZAAAAAAAAAAAAAAAJGRpbmYAAAAecG9zdAAAAAEAAAABAAAAEHN0YmwAAABkc3RzZAAAAAAAAAABAAAAMG1pZGkAAAAQZG14ZAAAAAAAAAAAADhkYXRhAAAAAQAAMIIAAQAAAACJeyJtaW1lX3R5cGUiOiAidmlkZW8vd2VibSIsICJjb2RlY3MiOiBbXSwgImZyYW1lX3JhdGUiOiAwLjAwMDEwMCwgIndpZHRoIjogMiwgImhlaWdodCI6IDIsICJ0aW1lc2NhbGUiOiAxMDAwMDAwLCAiZHVyYXRpb24iOiAzNjAwLjAwfQA=';
+            video.loop = true;
+            video.muted = true;
+            video.style.position = 'absolute';
+            video.style.width = '1px';
+            video.style.height = '1px';
+            video.style.opacity = '0.01';
+            document.body.appendChild(video);
+            
+            video.play().then(() => {
+                statusDisplay.textContent = 'Status: Aktivní (Video Fallback)';
+                statusDisplay.style.color = 'green';
+            }).catch(err => {
+                statusDisplay.textContent = 'Status: Selhalo (Video nelze přehrát)';
+                statusDisplay.style.color = 'red';
+                console.error(`Fallback chyba: ${err.message}`);
+            });
+            
+            // Simulace aktivity každých 30 sekund
+            keepAwakeInterval = setInterval(() => {
+                if (document.hidden) {
+                    // Pokud je stránka na pozadí, nemusíme nic dělat
+                    return;
+                }
+                
+                const event = new MouseEvent('mousemove', {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    clientX: Math.floor(Math.random() * window.innerWidth),
+                    clientY: Math.floor(Math.random() * window.innerHeight)
+                });
+                
+                document.dispatchEvent(event);
+            }, 30000);
+        }
+        
+        // Přepínač funkce zabránění zamknutí obrazovky
+        keepAwakeBtn.addEventListener('click', () => {
+            if (wakeLock || keepAwakeInterval) {
+                // Vypnout
+                if (wakeLock) {
+                    wakeLock.release();
+                    wakeLock = null;
+                }
+                
+                if (keepAwakeInterval) {
+                    clearInterval(keepAwakeInterval);
+                    keepAwakeInterval = null;
+                }
+                
+                const videos = document.querySelectorAll('video');
+                videos.forEach(v => v.remove());
+                
+                statusDisplay.textContent = 'Status: Neaktivní';
+                statusDisplay.style.color = 'black';
+                keepAwakeBtn.textContent = 'Zabránit zhasnutí a zamčení';
+            } else {
+                // Zapnout
+                requestWakeLock();
+                keepAwakeBtn.textContent = 'Vypnout zabránění zhasnutí';
+            }
+        });
+        
+        // Celoobrazovkový režim
+        document.addEventListener('dblclick', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Chyba celoobrazovkového režimu: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+        
+        // Informace o použití
+        colorDisplay.innerHTML = '<div style="background: rgba(255,255,255,0.8); padding: 20px; border-radius: 10px; max-width: 80%; text-align: center;">Dvojklikem přepnete celoobrazovkový režim</div>';
+        setTimeout(() => {
+            colorDisplay.innerHTML = '';
+        }, 5000);
     </script>
 </body>
 </html>
